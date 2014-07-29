@@ -15,6 +15,7 @@ angular.module('boundstate.assessment')
     }
     this.id = config.id;
     this.label = config.label;
+    this.hint = config.hint;
     this.config = config;
     this.isEnabled = false;
   };

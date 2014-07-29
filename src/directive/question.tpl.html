@@ -1,4 +1,4 @@
-<div class="question" ng-show="question.isEnabled" ng-class="{ focus: !answer }">
+<div class="question" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !answer }">
   {{ question.label }}
   <div class="question-hint" ng-if="question.hint">{{ question.hint }}</div>
   <div class="radio" ng-repeat="option in question.options" ng-class="{ active: option.value === answer }">

@@ -35,6 +35,7 @@ angular.module('boundstate.assessment')
 
     var assessmentFactory = {
       score: null,
+      currentQuestionIndex: null,
       getQuestions: function() {
         return _questions;
       },
@@ -53,7 +54,7 @@ angular.module('boundstate.assessment')
         var question = this.getQuestion(questionId);
         question.answer = value;
         this.reload();
-        $rootScope.$broadcast('boundstate.assessment:answer_changed');
+        $rootScope.$broadcast('boundstate.assessment:answer_changed', value, question);
       },
       getAnswer: function(questionId) {
         var question = this.getQuestion(questionId);
@@ -73,6 +74,7 @@ angular.module('boundstate.assessment')
           if (arePreviousQuestionsAnswered && question.isApplicable) {
             question.isEnabled = true;
             this.score = question.score;
+            this.currentQuestion = question;
             arePreviousQuestionsAnswered = question.isAnswered();
           } else {
             question.isEnabled = false;

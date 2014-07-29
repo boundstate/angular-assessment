@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.1 - 2014-07-29
+ * angular-assessment - v0.0.2 - 2014-07-29
  *
  * Copyright (c) 2014 Bound State Software
  */
@@ -34,11 +34,13 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.question = assessment.getQuestion(attrs.questionId);
+      scope.isCurrent = scope.question == assessment.currentQuestion;
       scope.answer = assessment.getAnswer(scope.question.id);
       scope.changeAnswer = function() {
         assessment.setAnswer(scope.question.id, scope.answer);
       };
       scope.$on('boundstate.assessment:answer_changed', function () {
+        scope.isCurrent = scope.question == assessment.currentQuestion;
         scope.answer = assessment.getAnswer(scope.question.id);
       });
     },
@@ -65,6 +67,7 @@ angular.module('boundstate.assessment')
     }
     this.id = config.id;
     this.label = config.label;
+    this.hint = config.hint;
     this.config = config;
     this.isEnabled = false;
   };
@@ -161,6 +164,7 @@ angular.module('boundstate.assessment')
 
     var assessmentFactory = {
       score: null,
+      currentQuestionIndex: null,
       getQuestions: function() {
         return _questions;
       },
@@ -179,7 +183,7 @@ angular.module('boundstate.assessment')
         var question = this.getQuestion(questionId);
         question.answer = value;
         this.reload();
-        $rootScope.$broadcast('boundstate.assessment:answer_changed');
+        $rootScope.$broadcast('boundstate.assessment:answer_changed', value, question);
       },
       getAnswer: function(questionId) {
         var question = this.getQuestion(questionId);
@@ -199,6 +203,7 @@ angular.module('boundstate.assessment')
           if (arePreviousQuestionsAnswered && question.isApplicable) {
             question.isEnabled = true;
             this.score = question.score;
+            this.currentQuestion = question;
             arePreviousQuestionsAnswered = question.isAnswered();
           } else {
             question.isEnabled = false;
@@ -220,13 +225,13 @@ angular.module('templates-main', ['directive/assessment.tpl.html', 'directive/qu
 angular.module("directive/assessment.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/assessment.tpl.html",
     "<div class=\"assessment\">\n" +
-    "  <question ng-repeat=\"question in questions\" question-id=\"{{question.id}}\"></question>\n" +
+    "  <div question ng-repeat=\"question in questions\" question-id=\"{{question.id}}\"></div>\n" +
     "</div>");
 }]);
 
 angular.module("directive/question.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/question.tpl.html",
-    "<div class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ focus: !answer }\">\n" +
+    "<div class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !answer }\">\n" +
     "  {{ question.label }}\n" +
     "  <div class=\"question-hint\" ng-if=\"question.hint\">{{ question.hint }}</div>\n" +
     "  <div class=\"radio\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === answer }\">\n" +

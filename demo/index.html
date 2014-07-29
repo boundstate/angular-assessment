@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>angular-assessment demo</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f7f7f7;
+    }
+    .assessment {
+      margin: 0 auto;
+      max-width: 600px;
+    }
+    .question {
+      margin: 0 0 20px;
+      padding: 20px 20px 10px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+    }
+    .question.current {
+      -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+      border-color: #ccc;
+    }
+    .question .question-hint {
+      color: #555555;
+    }
+    .question .radio {
+      color: #000;
+    }
+  </style>
+
+  <!-- compiled JavaScript -->
+  <script type="text/javascript" src="../bower_components/lodash/dist/lodash.js"></script>
+  <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="../dist/angular-assessment.js"></script>
+</head>
+<body>
+
+<div assessment></div>
+
+<script type="text/javascript">
+  angular.module('app', ['boundstate.assessment'])
+  .config(function(assessmentProvider) {
+    assessmentProvider.setQuestions([
+      {
+        id: 'cats',
+        label: 'Do you like cats?'
+      },
+      {
+        id: 'gender',
+        label: 'What is your gender?',
+        options: [
+          { label: 'Male',   value: 'm', score: 'h' },
+          { label: 'Female', value: 'f', score: 'l' }
+        ]
+      },
+      {
+        id: 'age',
+        label: 'What is your age?',
+        options: [
+          { label: 'Under 20', value: 'under20' },
+          { label: '20 - 30',  value: '20to30'  },
+          { label: 'Over 30',  value: 'over30'  }
+        ],
+        score: function(value, score, assessment) {
+          if (assessment.getAnswer('gender') == 'm') {
+            return value == '20to30' ? 'h' : 'm';
+          } else {
+            return value == '20to30' ? 'm' : 'l';
+          }
+        }
+      },
+      {
+        id: 'pregnant',
+        label: 'Have you ever been pregnant?',
+        isApplicable: function(score, assessment) {
+          return assessment.getAnswer('gender') == 'f';
+        },
+        score: function(value, score) {
+          return value == 'y' ? 'h' : score;
+        }
+      }
+    ]);
+  });
+</script>
+
+</body>
+</html>

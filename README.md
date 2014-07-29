@@ -62,15 +62,16 @@ You can optionally specify default options for questions:
     
 Question have the following properties:
 
--  `id`: unique question ID (required)
--  `label`: question label to display in the `question` directive
+-  `id`: unique question ID (required).
+-  `label`: question label to display in the `question` directive.
+-  `hint`: question hint to display after the label (optional).
 -  `options`: question options to display (optional). 
     If no options are specified, default options will be used.  
     Options can be specified as an array or as objects with the following properties:
-    -  `label`: option label (required)
-    -  `value`: option value (required)
-    -  `score`: the new score if this option is selected (optional)    
--  `isApplicable`: a function with signature `(score, assessment)` that returns whether the question should be displayed (optional)
+    -  `label`: option label (required).
+    -  `value`: option value (required).
+    -  `score`: the new score if this option is selected (optional).    
+-  `isApplicable`: a function with signature `(score, assessment)` that returns whether the question should be displayed (optional).
 -  `score`: a function with signature `(value, score, assessment)` that returns a new score. (If the selected option has a `score` property it will override this function.)
 
 The `isApplicable` and `score` functions are evaluated in the order the questions are defined, so you can safely reference previous question answers.
