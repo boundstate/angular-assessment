@@ -3,12 +3,14 @@
 Assessment service and directives for AngularJS.
 An assessment is an ordered set of multiple-choice questions, which can affect the assessment score.
 
+[![build status](https://ci.boundstatesoftware.com/projects/2/status.png?ref=master)](https://ci.boundstatesoftware.com/projects/2?ref=master)
+
 ## Installation
 
 Include `lodash` and `angular-assessment.js` in your HTML:
 
-    <script src="lodash.js">
-    <script src="angular-assessment.js">
+    <script src="lodash.js"></script>
+    <script src="angular-assessment.js"></script>
     
 Then load the module in your application by adding it as a dependent module:
 
