@@ -132,10 +132,6 @@ module.exports = function ( grunt ) {
       },
       unit: {
         singleRun: true
-      },
-      background: {
-        background: true,
-        singleRun: true
       }
     },
 
@@ -146,5 +142,5 @@ module.exports = function ( grunt ) {
   });
 
   grunt.registerTask('default', [ 'build' ]);
-  grunt.registerTask('build', [ 'clean', 'html2js', 'jshint', 'concat', 'ngAnnotate', 'uglify', 'karma:background']);
+  grunt.registerTask('build', [ 'clean', 'html2js', 'jshint', 'concat', 'ngAnnotate', 'uglify']);
 };
