@@ -1,0 +1,26 @@
+{
+  "name": "angular-assessment",
+  "description": "Assessment module for AngularJS",
+  "author": "Bound State Software",
+  "version": "0.0.1",
+  "scripts": {
+    "postinstall": "./node_modules/.bin/bower install",
+    "test": "./node_modules/karma/bin/karma start karma.conf.js --single-run"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-clean": "^0.4.1",
+    "grunt-contrib-copy": "^0.4.1",
+    "grunt-contrib-jshint": "^0.4.3",
+    "grunt-contrib-concat": "^0.3.0",
+    "grunt-contrib-watch": "^0.4.4",
+    "grunt-contrib-uglify": "^0.2.7",
+    "grunt-ng-annotate": "^0.3.0",
+    "grunt-html2js": "^0.1.9",
+    "grunt-bump": "0.0.6",
+    "karma-jasmine": "^0.2.2",
+    "grunt-karma": "^0.8.2",
+    "karma": "^0.12.17",
+    "karma-phantomjs-launcher": "^0.1.4"
+  }
+}
