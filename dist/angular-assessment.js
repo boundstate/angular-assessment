@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.3 - 2014-07-30
+ * angular-assessment - v0.0.4 - 2014-07-30
  *
  * Copyright (c) 2014 Bound State Software
  */
@@ -34,15 +34,16 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.question = assessment.getQuestion(attrs.questionId);
-      scope.isCurrent = scope.question == assessment.currentQuestion;
-      scope.answer = assessment.getAnswer(scope.question.id);
       scope.changeAnswer = function() {
         assessment.setAnswer(scope.question.id, scope.answer);
       };
-      scope.$on('boundstate.assessment:answer_changed', function () {
-        scope.isCurrent = scope.question == assessment.currentQuestion;
+
+      var update = function() {
+        scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
         scope.answer = assessment.getAnswer(scope.question.id);
-      });
+      };
+      scope.$on('boundstate.assessment:answer_changed', update);
+      update();
     },
     templateUrl: 'directive/question.tpl.html',
     replace: true

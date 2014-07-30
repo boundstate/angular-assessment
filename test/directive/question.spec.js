@@ -72,6 +72,17 @@ describe('boundstate.assessment', function () {
       expect(question).toHaveClass('question');
     });
 
+    it('should add the "current" class to the current question', function () {
+      var questions = compileQuestion('<question question-id="cats"></question><question question-id="gender"></question>', $scope);
+      expect(questions.eq(0)).toHaveClass('current');
+      expect(questions.eq(1)).not.toHaveClass('current');
+      $scope.$apply(function() {
+        assessment.setAnswer('cats', 'y');
+      });
+      expect(questions.eq(0)).not.toHaveClass('current');
+      expect(questions.eq(1)).toHaveClass('current');
+    });
+
     it('should display the question label', function () {
       var questions = compileQuestion('<question question-id="gender"></question><question question-id="age"></question>', $scope);
       expect(questions.eq(0)).toContainText('What is your gender?');
