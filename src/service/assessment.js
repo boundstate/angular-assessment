@@ -58,7 +58,7 @@ angular.module('boundstate.assessment')
       },
       getAnswer: function(questionId) {
         var question = this.getQuestion(questionId);
-        return question.answer;
+        return question.isAnswered() ? question.answer : undefined;
       },
       reload: function() {
         var arePreviousQuestionsAnswered = true;
