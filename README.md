@@ -65,9 +65,8 @@ Question have the following properties:
 -  `id`: unique question ID (required).
 -  `label`: question label to display in the `question` directive.
 -  `hint`: question hint to display after the label (optional).
--  `options`: question options to display (optional). 
-    If no options are specified, default options will be used.  
-    Options can be specified as an array or as objects with the following properties:
+-  `options`: an array of options to display, or a function with signature `(score, assessment)` that returns an array of options (optional).  
+    The array may contain strings or objects with the following properties:
     -  `label`: option label (required).
     -  `value`: option value (required).
     -  `score`: the new score if this option is selected (optional).    
