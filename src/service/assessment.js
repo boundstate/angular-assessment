@@ -20,7 +20,10 @@ angular.module('boundstate.assessment')
   };
 
   this.$get = function ($rootScope, $window, Question) {
+    var _score = null;
+    var _isComplete = false;
     var _questions = [];
+    var _currentQuestion = null;
     var _ = $window._;
 
     angular.forEach(_questionsConfig, function(config) {
@@ -34,13 +37,23 @@ angular.module('boundstate.assessment')
     });
 
     var assessmentFactory = {
-      score: null,
-      currentQuestionIndex: null,
+      getScore: function () {
+        return _score;
+      },
+      isComplete: function () {
+        return _isComplete;
+      },
+      getCurrentQuestion: function() {
+        return _currentQuestion;
+      },
       getQuestions: function() {
         return _questions;
       },
       getQuestion: function(questionId) {
         return _.find(_questions, { id: questionId });
+      },
+      getQuestionIndex: function(questionId) {
+        return _.findIndex(_questions, { id: questionId });
       },
       isQuestionApplicable: function(questionId) {
         var question = this.getQuestion(questionId);
@@ -61,25 +74,23 @@ angular.module('boundstate.assessment')
         return question.isAnswered() ? question.answer : undefined;
       },
       reload: function() {
+        var self = this;
         var arePreviousQuestionsAnswered = true;
-        this.score = null;
+        _score = null;
         // Evaluate questions in the order they were defined
-        for (var i=0; i<_questions.length; i++) {
-          var question = _questions[i];
-          var previousQuestion = i > 0 ? _questions[i-1] : null;
-          var previousQuestionScore = previousQuestion ? previousQuestion.score : null;
-
-          question.reload(previousQuestionScore, this);
-
+        angular.forEach(_questions, function (question) {
+          question.reload(_score, self);
           if (arePreviousQuestionsAnswered && question.isApplicable) {
             question.isEnabled = true;
-            this.score = question.score;
-            this.currentQuestion = question;
+            _score = question.score;
+            _currentQuestion = question;
             arePreviousQuestionsAnswered = question.isAnswered();
           } else {
             question.isEnabled = false;
           }
-        }
+        });
+        // If the current question is answered the assessment must be complete
+        _isComplete = _currentQuestion.isAnswered();
       }
     };
 

@@ -106,6 +106,35 @@ describe('boundstate.assessment', function () {
 
     });
 
+    describe('getQuestionIndex', function () {
+
+      it('should return the index for a particular question id', inject(function () {
+        expect(assessment.getQuestionIndex('gender')).toBe(1);
+        expect(assessment.getQuestionIndex('age')).toBe(2);
+      }));
+
+      it('should return -1 if passed an invalid question id', inject(function () {
+        expect(assessment.getQuestionIndex('city')).toEqual(-1);
+      }));
+
+    });
+
+    describe('getCurrentQuestion', function () {
+
+      it('should return the next unanswered question', inject(function () {
+        expect(assessment.getCurrentQuestion().id).toEqual('cats');
+        assessment.setAnswer('cats', 'y');
+        expect(assessment.getCurrentQuestion().id).toEqual('gender');
+      }));
+
+      it('should return an answered question if that answer is invalid', inject(function () {
+        expect(assessment.getCurrentQuestion().id).toEqual('cats');
+        assessment.setAnswer('cats', 'meow');
+        expect(assessment.getCurrentQuestion().id).toEqual('cats');
+      }));
+
+    });
+
     describe('isQuestionApplicable', function () {
 
       it('should return true if has no "isApplicable" function', inject(function () {
@@ -147,41 +176,41 @@ describe('boundstate.assessment', function () {
 
     });
 
-    describe('score', function () {
+    describe('getScore()', function () {
 
       it('should return null if no answers are provided', inject(function () {
-        expect(assessment.score).toBe(null);
+        expect(assessment.getScore()).toBe(null);
       }));
 
       it('should remain unchanged by answers to questions with no score defined', inject(function () {
         assessment.setAnswer('cats', 'y');
-        expect(assessment.score).toBe(null);
+        expect(assessment.getScore()).toBe(null);
       }));
 
       it('should be affected by answers to questions with explicit scores defined in the options', inject(function () {
         assessment.setAnswer('cats', 'y');
         assessment.setAnswer('gender', 'm');
-        expect(assessment.score).toBe('h');
+        expect(assessment.getScore()).toBe('h');
         assessment.setAnswer('gender', 'f');
-        expect(assessment.score).toBe('l');
+        expect(assessment.getScore()).toBe('l');
       }));
 
       it('should be affected by answers to questions with a score function', inject(function () {
         assessment.setAnswer('cats', 'y');
         assessment.setAnswer('gender', 'm');
         assessment.setAnswer('age', '20to30');
-        expect(assessment.score).toBe('h');
+        expect(assessment.getScore()).toBe('h');
         assessment.setAnswer('age', 'over30');
-        expect(assessment.score).toBe('m');
+        expect(assessment.getScore()).toBe('m');
       }));
 
       it('should be affected by answers in the order the questions are defined', inject(function () {
         assessment.setAnswer('cats', 'y');
         assessment.setAnswer('age', '20to30');
         assessment.setAnswer('gender', 'f');
-        expect(assessment.score).toBe('m');
+        expect(assessment.getScore()).toBe('m');
         assessment.setAnswer('gender', 'm');
-        expect(assessment.score).toBe('h');
+        expect(assessment.getScore()).toBe('h');
       }));
 
       it('should only be affected by answers to questions that are applicable', inject(function () {
@@ -189,82 +218,30 @@ describe('boundstate.assessment', function () {
         assessment.setAnswer('age', 'over30');
         assessment.setAnswer('gender', 'm');
         assessment.setAnswer('pregnant', 'y');
-        expect(assessment.score).toBe('m');
+        expect(assessment.getScore()).toBe('m');
       }));
 
     });
 
-  });
+    describe('isComplete()', function () {
 
-  describe('question directive', function () {
-    var $scope, $compile, assessmentProvider, assessment;
+      it('should return true only if there are unanswered applicable questions', inject(function () {
+        expect(assessment.isComplete()).toBe(false);
+        assessment.setAnswer('cats', 'y');
+        expect(assessment.isComplete()).toBe(false);
+        assessment.setAnswer('gender', 'f');
+        expect(assessment.isComplete()).toBe(false);
+        assessment.setAnswer('age', 'over30');
+        expect(assessment.isComplete()).toBe(false);
+      }));
 
-    beforeEach(module('boundstate.assessment', function (_assessmentProvider_) {
-      assessmentProvider = _assessmentProvider_;
-      assessmentProvider.setDefaultQuestionOptions(testDefaultQuestionOptions);
-      assessmentProvider.setQuestions(testQuestions);
-    }));
-
-    beforeEach(inject(function (_$rootScope_, _$compile_, _assessment_) {
-      $scope = _$rootScope_;
-      $compile = _$compile_;
-      assessment = _assessment_;
-    }));
-
-    var compileQuestion = function (markup, scope) {
-      var el = $compile(markup)(scope);
-      scope.$digest();
-      return el;
-    };
-
-    it('should add the "question" class', function () {
-      var question = compileQuestion('<question question-id="cats"></question>', $scope);
-      expect(question).toHaveClass('question');
-    });
-
-    it('should display the question label', function () {
-      var questions = compileQuestion('<question question-id="gender"></question><question question-id="age"></question>', $scope);
-      expect(questions.eq(0)).toContainText('What is your gender?');
-      expect(questions.eq(1)).toContainText('What is your age?');
-    });
-
-    it('should display the option labels', function () {
-      var questions = compileQuestion('<question question-id="cats"></question><question question-id="age"></question>', $scope);
-      angular.forEach(testDefaultQuestionOptions, function(option) {
-        expect(questions.eq(0)).toContainText(option.label);
-      });
-      expect(questions.eq(1)).toContainText('Under 20');
-      expect(questions.eq(1)).toContainText('Over 30');
-    });
-
-    it('should be hidden only if a question is enabled', function () {
-      var questions = compileQuestion('<question question-id="cats"></question><question question-id="gender"></question><question question-id="age"></question><question question-id="pregnant"></question>', $scope);
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).toHaveClass('ng-hide');
-      expect(questions.eq(2)).toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
-      $scope.$apply(function() {
+      it('should return true if there are no unanswered applicable questions', inject(function () {
         assessment.setAnswer('cats', 'y');
         assessment.setAnswer('gender', 'm');
-      });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
-      $scope.$apply(function() {
-        assessment.setAnswer('age', '20to30');
-      });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
-      $scope.$apply(function() {
-        assessment.setAnswer('gender', 'f');
-      });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).not.toHaveClass('ng-hide');
+        assessment.setAnswer('age', 'over30');
+        expect(assessment.isComplete()).toBe(true);
+      }));
+
     });
 
   });
