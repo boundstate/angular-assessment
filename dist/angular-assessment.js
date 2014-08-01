@@ -20,6 +20,7 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.questions = assessment.getQuestions();
+      scope.offset = el[0].getBoundingClientRect().top;
     },
     templateUrl: 'directive/assessment.tpl.html',
     replace: true
@@ -245,7 +246,7 @@ angular.module('templates-main', ['directive/assessment.tpl.html', 'directive/qu
 angular.module("directive/assessment.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/assessment.tpl.html",
     "<div class=\"assessment\">\n" +
-    "  <div question ng-repeat=\"question in questions\" question-id=\"{{question.id}}\"></div>\n" +
+    "  <div question ng-repeat=\"question in questions\" question-id=\"{{question.id}}\" offset=\"{{offset}}\"></div>\n" +
     "</div>");
 }]);
 

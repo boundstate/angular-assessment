@@ -4,7 +4,7 @@
   "main": "./dist/angular-assessment.js",
   "dependencies": {
     "angular": "~1.2",
-    "angular-scroll-to-me": "https://git.boundstatesoftware.com/boundstate/angular-scroll-to-me.git",
+    "angular-scroll-to-me": "https://git.boundstatesoftware.com/boundstate/angular-scroll-to-me.git#v0.0.2",
     "lodash": "~2.4"
   },
   "devDependencies": {

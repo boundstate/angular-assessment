@@ -6,6 +6,7 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.questions = assessment.getQuestions();
+      scope.offset = el[0].getBoundingClientRect().top;
     },
     templateUrl: 'directive/assessment.tpl.html',
     replace: true
