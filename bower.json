@@ -4,10 +4,10 @@
   "main": "./dist/angular-assessment.js",
   "dependencies": {
     "angular": "~1.2",
+    "angular-scroll-to-me": "https://git.boundstatesoftware.com/boundstate/angular-scroll-to-me.git",
     "lodash": "~2.4"
   },
   "devDependencies": {
-    "angular-scroll-to-me": "https://git.boundstatesoftware.com/boundstate/angular-scroll-to-me.git",
     "angular-mocks": "~1.2",
     "jasmine-jquery": "~2.0"
   },
