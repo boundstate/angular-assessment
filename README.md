@@ -7,10 +7,12 @@ An assessment is an ordered set of multiple-choice questions, which can affect t
 
 ## Installation
 
-Include `lodash` and `angular-assessment.js` in your HTML:
+Include `angular-assessment.js` and the libraries it depends on in your HTML:
 
-    <script src="lodash.js"></script>
-    <script src="angular-assessment.js"></script>
+    <script src="bower_components/lodash/dist/lodash.js"></script>
+    <script src="bower_components/smooth-scroll/dist/js/smooth-scroll.js"></script>
+    <script src="bower_components/angular-scroll-to-me/angular-scroll-to-me.js"></script>
+    <script src="bower_components/angular-assessment/dist/angular-assessment.js"></script>
     
 Then load the module in your application by adding it as a dependent module:
 

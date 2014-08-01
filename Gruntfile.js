@@ -72,7 +72,7 @@ module.exports = function ( grunt ) {
       },
       build: {
         src: [
-          'src/**/*.js',
+          '<%= files.js %>',
           '<%= html2js.main.dest %>'
         ],
         dest: '<%= dist_dir %>/<%= pkg.name %>.js'

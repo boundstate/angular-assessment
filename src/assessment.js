@@ -1,5 +1,6 @@
 angular.module('boundstate.assessment', [
-  'templates-main'
+  'templates-main',
+  'boundstate.scrollToMe'
 ])
 
 ;

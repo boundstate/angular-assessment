@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.4 - 2014-07-30
+ * angular-assessment - v0.0.4 - 2014-08-01
  *
  * Copyright (c) 2014 Bound State Software
  */
@@ -7,7 +7,8 @@
 
 (function (window, angular, undefined) {
 angular.module('boundstate.assessment', [
-  'templates-main'
+  'templates-main',
+  'boundstate.scrollToMe'
 ])
 
 ;
@@ -243,7 +244,7 @@ angular.module("directive/assessment.tpl.html", []).run(["$templateCache", funct
 
 angular.module("directive/question.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/question.tpl.html",
-    "<div class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !answer }\">\n" +
+    "<div id=\"question-{{question.id}}\" class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !answer }\" scroll-to-me=\"isCurrent\">\n" +
     "  {{ question.label }}\n" +
     "  <div class=\"question-hint\" ng-if=\"question.hint\">{{ question.hint }}</div>\n" +
     "  <div class=\"radio\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === answer }\">\n" +
