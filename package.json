@@ -2,7 +2,7 @@
   "name": "angular-assessment",
   "description": "Assessment module for AngularJS",
   "author": "Bound State Software",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
     "test": "./node_modules/karma/bin/karma start karma.conf.js --single-run"
