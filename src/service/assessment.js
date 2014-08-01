@@ -67,11 +67,18 @@ angular.module('boundstate.assessment')
         var question = this.getQuestion(questionId);
         question.answer = value;
         this.reload();
-        $rootScope.$broadcast('boundstate.assessment:answer_changed', value, question);
+        $rootScope.$broadcast('boundstate.assessment:answer_changed');
       },
       getAnswer: function(questionId) {
         var question = this.getQuestion(questionId);
         return question.isAnswered() ? question.answer : undefined;
+      },
+      clearAnswers: function() {
+        for (var i=0; i<_questions.length; i++) {
+          delete _questions[i].answer;
+        }
+        this.reload();
+        $rootScope.$broadcast('boundstate.assessment:answer_changed');
       },
       reload: function() {
         var self = this;

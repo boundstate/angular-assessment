@@ -244,6 +244,16 @@ describe('boundstate.assessment', function () {
 
     });
 
+    describe('clearAnswers()', function () {
+
+      it('should clear all answers', inject(function () {
+        assessment.setAnswer('cats', 'y');
+        assessment.clearAnswers();
+        expect(assessment.getAnswer('cats')).toBeUndefined();
+      }));
+
+    });
+
   });
 
 });
