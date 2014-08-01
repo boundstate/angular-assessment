@@ -5,7 +5,9 @@ module.exports = function (karma) {
     },
     files: [
       'bower_components/lodash/dist/lodash.js',
+      'bower_components/smooth-scroll/dist/js/smooth-scroll.js',
       'bower_components/angular/angular.js',
+      'bower_components/angular-scroll-to-me/angular-scroll-to-me.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/jquery/dist/jquery.js',
       'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
