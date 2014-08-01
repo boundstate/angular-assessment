@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.4 - 2014-08-01
+ * angular-assessment - v0.0.5 - 2014-08-01
  *
  * Copyright (c) 2014 Bound State Software
  */
