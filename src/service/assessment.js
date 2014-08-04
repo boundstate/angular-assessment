@@ -24,13 +24,14 @@ angular.module('boundstate.assessment')
     var _isComplete = false;
     var _questions = [];
     var _currentQuestion = null;
+    var _previousQuestion = null;
     var _ = $window._;
 
     angular.forEach(_questionsConfig, function(config) {
       if (_.find(_questions, { id: config.id })) {
         throw new Error('A question with the id "' + config.id + '" is already defined');
       }
-      if (angular.isUndefined(config.options)) {
+      if ((angular.isUndefined(config.type) || config.type == 'text') && angular.isUndefined(config.options)) {
         config.options = _defaultQuestionOptions;
       }
       _questions.push(new Question(config));

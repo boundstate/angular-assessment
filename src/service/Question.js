@@ -10,10 +10,8 @@ angular.module('boundstate.assessment')
     if (angular.isUndefined(config.label)) {
       throw new Error('Question label must be specified');
     }
-    if (angular.isUndefined(config.options)) {
-      throw new Error('Question options must be specified');
-    }
     this.id = config.id;
+    this.type = config.type || 'choice';
     this.label = config.label;
     this.hint = config.hint;
     this.config = config;
@@ -29,11 +27,17 @@ angular.module('boundstate.assessment')
   };
 
   Question.prototype.isAnswered = function() {
-    return angular.isDefined(this.getSelectedOption());
+    if (this.type == 'choice') {
+      return angular.isDefined(this.getSelectedOption());
+    } else {
+      return angular.isDefined(this.answer) && this.answer.length > 0;
+    }
   };
 
   Question.prototype.reload = function(score, assessment) {
-    this._reloadOptions(score, assessment);
+    if (this.type == 'choice') {
+      this._reloadOptions(score, assessment);
+    }
     this._reloadIsApplicable(score, assessment);
     this._reloadScore(score, assessment);
   };
@@ -60,8 +64,8 @@ angular.module('boundstate.assessment')
   Question.prototype._reloadScore = function(score, assessment) {
     this.score = score;
     if (this.isAnswered()) {
-      var selectedOption = this.getSelectedOption();
-      if (angular.isDefined(selectedOption.score)) {
+      var selectedOption = this.type == 'choice' ? this.getSelectedOption() : undefined;
+      if (angular.isDefined(selectedOption) && angular.isDefined(selectedOption.score)) {
         // score is specified explicitly in question option
         this.score = selectedOption.score;
       } else if (angular.isDefined(this.config.score)) {

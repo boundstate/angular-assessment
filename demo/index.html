@@ -25,11 +25,27 @@
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
       border-color: #ccc;
     }
-    .question .question-hint {
+    .question-hint {
       color: #555555;
     }
-    .question .radio {
+    .choice {
+      position: relative;
+      display: block;
+      min-height: 20px;
+      margin-top: 10px;
+      margin-bottom: 10px;
       color: #000;
+    }
+    .choice label {
+      padding-left: 20px;
+      margin-bottom: 0;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .choice input {
+      position: absolute;
+      margin-top: 4px \9;
+      margin-left: -20px;
     }
   </style>
 
@@ -47,6 +63,11 @@
   angular.module('app', ['boundstate.assessment'])
   .config(function(assessmentProvider) {
     assessmentProvider.setQuestions([
+      {
+        id: 'name',
+        label: 'What is your name?',
+        type: 'text'
+      },
       {
         id: 'cats',
         label: 'Do you like cats?'

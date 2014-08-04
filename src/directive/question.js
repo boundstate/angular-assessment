@@ -6,16 +6,18 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.question = assessment.getQuestion(attrs.questionId);
-      scope.changeAnswer = function() {
-        assessment.setAnswer(scope.question.id, scope.answer);
-      };
+      scope.form = {};
 
       var update = function() {
         scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
-        scope.answer = assessment.getAnswer(scope.question.id);
+        scope.form.answer = assessment.getAnswer(scope.question.id);
       };
       scope.$on('boundstate.assessment:answer_changed', update);
       update();
+
+      scope.setAnswer = function(answer) {
+        assessment.setAnswer(scope.question.id, answer);
+      };
     },
     templateUrl: 'directive/question.tpl.html',
     replace: true

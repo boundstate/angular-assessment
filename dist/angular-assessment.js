@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.7 - 2014-08-01
+ * angular-assessment - v0.0.7 - 2014-08-03
  *
  * Copyright (c) 2014 Bound State Software
  */
@@ -36,16 +36,18 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.question = assessment.getQuestion(attrs.questionId);
-      scope.changeAnswer = function() {
-        assessment.setAnswer(scope.question.id, scope.answer);
-      };
+      scope.form = {};
 
       var update = function() {
         scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
-        scope.answer = assessment.getAnswer(scope.question.id);
+        scope.form.answer = assessment.getAnswer(scope.question.id);
       };
       scope.$on('boundstate.assessment:answer_changed', update);
       update();
+
+      scope.setAnswer = function(answer) {
+        assessment.setAnswer(scope.question.id, answer);
+      };
     },
     templateUrl: 'directive/question.tpl.html',
     replace: true
@@ -65,10 +67,8 @@ angular.module('boundstate.assessment')
     if (angular.isUndefined(config.label)) {
       throw new Error('Question label must be specified');
     }
-    if (angular.isUndefined(config.options)) {
-      throw new Error('Question options must be specified');
-    }
     this.id = config.id;
+    this.type = config.type || 'choice';
     this.label = config.label;
     this.hint = config.hint;
     this.config = config;
@@ -84,11 +84,17 @@ angular.module('boundstate.assessment')
   };
 
   Question.prototype.isAnswered = function() {
-    return angular.isDefined(this.getSelectedOption());
+    if (this.type == 'choice') {
+      return angular.isDefined(this.getSelectedOption());
+    } else {
+      return angular.isDefined(this.answer) && this.answer.length > 0;
+    }
   };
 
   Question.prototype.reload = function(score, assessment) {
-    this._reloadOptions(score, assessment);
+    if (this.type == 'choice') {
+      this._reloadOptions(score, assessment);
+    }
     this._reloadIsApplicable(score, assessment);
     this._reloadScore(score, assessment);
   };
@@ -115,8 +121,8 @@ angular.module('boundstate.assessment')
   Question.prototype._reloadScore = function(score, assessment) {
     this.score = score;
     if (this.isAnswered()) {
-      var selectedOption = this.getSelectedOption();
-      if (angular.isDefined(selectedOption.score)) {
+      var selectedOption = this.type == 'choice' ? this.getSelectedOption() : undefined;
+      if (angular.isDefined(selectedOption) && angular.isDefined(selectedOption.score)) {
         // score is specified explicitly in question option
         this.score = selectedOption.score;
       } else if (angular.isDefined(this.config.score)) {
@@ -156,13 +162,14 @@ angular.module('boundstate.assessment')
     var _isComplete = false;
     var _questions = [];
     var _currentQuestion = null;
+    var _previousQuestion = null;
     var _ = $window._;
 
     angular.forEach(_questionsConfig, function(config) {
       if (_.find(_questions, { id: config.id })) {
         throw new Error('A question with the id "' + config.id + '" is already defined');
       }
-      if (angular.isUndefined(config.options)) {
+      if ((angular.isUndefined(config.type) || config.type == 'text') && angular.isUndefined(config.options)) {
         config.options = _defaultQuestionOptions;
       }
       _questions.push(new Question(config));
@@ -252,13 +259,21 @@ angular.module("directive/assessment.tpl.html", []).run(["$templateCache", funct
 
 angular.module("directive/question.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/question.tpl.html",
-    "<div id=\"question-{{question.id}}\" class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !answer }\" scroll-to-me=\"isCurrent\">\n" +
+    "<div id=\"question-{{question.id}}\" class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !question.isAnswered() }\" scroll-to-me=\"isCurrent\">\n" +
     "  {{ question.label }}\n" +
     "  <div class=\"question-hint\" ng-if=\"question.hint\">{{ question.hint }}</div>\n" +
-    "  <div class=\"radio\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === answer }\">\n" +
-    "    <label>\n" +
-    "      <input type=\"radio\" ng-model=\"$parent.answer\" ng-value=\"option.value\" ng-change=\"changeAnswer()\"> {{ option.label }}\n" +
-    "    </label>\n" +
+    "  <div ng-if=\"question.type == 'choice'\">\n" +
+    "    <div class=\"choice\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === form.answer }\">\n" +
+    "      <label>\n" +
+    "        <input type=\"radio\" ng-model=\"form.answer\" ng-value=\"option.value\" ng-change=\"setAnswer(form.answer)\"> {{ option.label }}\n" +
+    "      </label>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"text\" ng-if=\"question.type == 'text'\">\n" +
+    "    <form ng-submit=\"setAnswer(form.answer);\">\n" +
+    "      <input type=\"text\" ng-model=\"form.answer\" ng-focus=\"hasFocus = true\" ng-blur=\"setAnswer(form.answer); hasFocus = false\">\n" +
+    "      <button type=\"submit\" ng-show=\"hasFocus\">Done</button>\n" +
+    "    </form>\n" +
     "  </div>\n" +
     "</div>");
 }]);

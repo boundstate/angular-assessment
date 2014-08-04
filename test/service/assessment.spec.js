@@ -38,6 +38,11 @@ describe('boundstate.assessment', function () {
       score: function(value, score) {
         return value == 'y' ? 'h' : score;
       }
+    },
+    {
+      id: 'name',
+      label: 'What is your name?',
+      type: 'text'
     }
   ];
 
@@ -239,6 +244,7 @@ describe('boundstate.assessment', function () {
         assessment.setAnswer('cats', 'y');
         assessment.setAnswer('gender', 'm');
         assessment.setAnswer('age', 'over30');
+        assessment.setAnswer('name', 'Bob');
         expect(assessment.isComplete()).toBe(true);
       }));
 

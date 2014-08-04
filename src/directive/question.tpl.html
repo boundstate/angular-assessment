@@ -1,9 +1,17 @@
-<div id="question-{{question.id}}" class="question" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !answer }" scroll-to-me="isCurrent">
+<div id="question-{{question.id}}" class="question" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !question.isAnswered() }" scroll-to-me="isCurrent">
   {{ question.label }}
   <div class="question-hint" ng-if="question.hint">{{ question.hint }}</div>
-  <div class="radio" ng-repeat="option in question.options" ng-class="{ active: option.value === answer }">
-    <label>
-      <input type="radio" ng-model="$parent.answer" ng-value="option.value" ng-change="changeAnswer()"> {{ option.label }}
-    </label>
+  <div ng-if="question.type == 'choice'">
+    <div class="choice" ng-repeat="option in question.options" ng-class="{ active: option.value === form.answer }">
+      <label>
+        <input type="radio" ng-model="form.answer" ng-value="option.value" ng-change="setAnswer(form.answer)"> {{ option.label }}
+      </label>
+    </div>
+  </div>
+  <div class="text" ng-if="question.type == 'text'">
+    <form ng-submit="setAnswer(form.answer);">
+      <input type="text" ng-model="form.answer" ng-focus="hasFocus = true" ng-blur="setAnswer(form.answer); hasFocus = false">
+      <button type="submit" ng-show="hasFocus">Done</button>
+    </form>
   </div>
 </div>

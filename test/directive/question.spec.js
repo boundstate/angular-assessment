@@ -6,6 +6,11 @@ describe('boundstate.assessment', function () {
       label: 'Do you like cats?'
     },
     {
+      id: 'name',
+      label: 'What is your name?',
+      type: 'text'
+    },
+    {
       id: 'gender',
       label: 'What is your gender?',
       options: [
@@ -73,7 +78,7 @@ describe('boundstate.assessment', function () {
     });
 
     it('should add the "current" class to the current question', function () {
-      var questions = compileQuestion('<question question-id="cats"></question><question question-id="gender"></question>', $scope);
+      var questions = compileQuestion('<question question-id="cats"></question><question question-id="name"></question>', $scope);
       expect(questions.eq(0)).toHaveClass('current');
       expect(questions.eq(1)).not.toHaveClass('current');
       $scope.$apply(function() {
@@ -89,7 +94,7 @@ describe('boundstate.assessment', function () {
       expect(questions.eq(1)).toContainText('What is your age?');
     });
 
-    it('should display the option labels', function () {
+    it('should display the option labels if it\'s type is choice', function () {
       var questions = compileQuestion('<question question-id="cats"></question><question question-id="age"></question>', $scope);
       angular.forEach(testDefaultQuestionOptions, function(option) {
         expect(questions.eq(0)).toContainText(option.label);
@@ -98,34 +103,30 @@ describe('boundstate.assessment', function () {
       expect(questions.eq(1)).toContainText('Over 30');
     });
 
+    it('should display a text input if it\'s type is text', function () {
+      var questions = compileQuestion('<question question-id="name"></question>', $scope);
+      expect(questions.eq(0)).toContainElement('input');
+    });
+
     it('should be hidden only if a question is enabled', function () {
-      var questions = compileQuestion('<question question-id="cats"></question><question question-id="gender"></question><question question-id="age"></question><question question-id="pregnant"></question>', $scope);
+      var questions = compileQuestion('<question question-id="cats"></question><question question-id="name"></question><question question-id="gender"></question><question question-id="age"></question><question question-id="pregnant"></question>', $scope);
       expect(questions.eq(0)).not.toHaveClass('ng-hide');
       expect(questions.eq(1)).toHaveClass('ng-hide');
-      expect(questions.eq(2)).toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
       $scope.$apply(function() {
         assessment.setAnswer('cats', 'y');
+        assessment.setAnswer('name', 'Bob');
         assessment.setAnswer('gender', 'm');
       });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
+      expect(questions.eq(3)).not.toHaveClass('ng-hide');
+      expect(questions.eq(4)).toHaveClass('ng-hide');
       $scope.$apply(function() {
         assessment.setAnswer('age', '20to30');
       });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).toHaveClass('ng-hide');
+      expect(questions.eq(4)).toHaveClass('ng-hide');
       $scope.$apply(function() {
         assessment.setAnswer('gender', 'f');
       });
-      expect(questions.eq(0)).not.toHaveClass('ng-hide');
-      expect(questions.eq(1)).not.toHaveClass('ng-hide');
-      expect(questions.eq(2)).not.toHaveClass('ng-hide');
-      expect(questions.eq(3)).not.toHaveClass('ng-hide');
+      expect(questions.eq(4)).not.toHaveClass('ng-hide');
     });
 
   });
