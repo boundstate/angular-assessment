@@ -10,7 +10,7 @@
   </div>
   <div class="text" ng-if="question.type == 'text'">
     <form ng-submit="setAnswer(form.answer);">
-      <input type="text" ng-model="form.answer" ng-focus="hasFocus = true" ng-blur="setAnswer(form.answer); hasFocus = false">
+      <input type="text" placeholder="{{ question.config.placeholder }}" ng-model="form.answer" ng-focus="hasFocus = true" ng-blur="setAnswer(form.answer); hasFocus = false">
       <button type="submit" ng-show="hasFocus">Done</button>
     </form>
   </div>
