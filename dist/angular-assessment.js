@@ -1,5 +1,5 @@
 /**
- * angular-assessment - v0.0.10 - 2014-08-21
+ * angular-assessment - v0.0.12 - 2014-08-21
  *
  * Copyright (c) 2014 Bound State Software
  */
@@ -7,8 +7,8 @@
 
 (function (window, angular, undefined) {
 angular.module('boundstate.assessment', [
-  'templates-main',
   'ngSanitize',
+  'templates-main',
   'boundstate.scrollToMe'
 ])
 
@@ -31,7 +31,7 @@ angular.module('boundstate.assessment')
 ;
 angular.module('boundstate.assessment')
 
-.directive('question', ["assessment", function(assessment) {
+.directive('question', ["$rootScope", "assessment", function($rootScope, assessment) {
   return {
     restrict: 'AE',
     scope: {},
@@ -43,8 +43,12 @@ angular.module('boundstate.assessment')
         scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
         scope.form.answer = assessment.getAnswer(scope.question.id);
       };
-      scope.$on('boundstate.assessment:answer_changed', update);
+      $rootScope.$on('boundstate.assessment:answer_changed', update);
       update();
+
+      scope.clickLink = function() {
+        $rootScope.$broadcast('boundstate.assessment:link_clicked', attrs.questionId);
+      };
 
       scope.setAnswer = function(answer) {
         assessment.setAnswer(scope.question.id, answer);
@@ -72,6 +76,7 @@ angular.module('boundstate.assessment')
     this.type = config.type || 'choice';
     this.label = config.label;
     this.hint = config.hint;
+    this.linkTitle = config.linkTitle;
     this.config = config;
     this.isEnabled = false;
   };
@@ -262,6 +267,7 @@ angular.module("directive/question.tpl.html", []).run(["$templateCache", functio
   $templateCache.put("directive/question.tpl.html",
     "<div id=\"question-{{question.id}}\" class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !question.isAnswered() }\" scroll-to-me=\"isCurrent\">\n" +
     "  <div class=\"question-label\" ng-bind-html=\"question.label\"></div>\n" +
+    "  <div class=\"question-link\" ng-if=\"question.linkTitle\"><a ng-click=\"clickLink()\">{{ question.linkTitle }}</a></div>\n" +
     "  <div class=\"question-hint\" ng-if=\"question.hint\" ng-bind-html=\"question.hint\"></div>\n" +
     "  <div ng-if=\"question.type == 'choice'\">\n" +
     "    <div class=\"choice\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === form.answer }\">\n" +

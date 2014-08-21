@@ -1,6 +1,6 @@
 angular.module('boundstate.assessment')
 
-.directive('question', function(assessment) {
+.directive('question', function($rootScope, assessment) {
   return {
     restrict: 'AE',
     scope: {},
@@ -12,8 +12,12 @@ angular.module('boundstate.assessment')
         scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
         scope.form.answer = assessment.getAnswer(scope.question.id);
       };
-      scope.$on('boundstate.assessment:answer_changed', update);
+      $rootScope.$on('boundstate.assessment:answer_changed', update);
       update();
+
+      scope.clickLink = function() {
+        $rootScope.$broadcast('boundstate.assessment:link_clicked', attrs.questionId);
+      };
 
       scope.setAnswer = function(answer) {
         assessment.setAnswer(scope.question.id, answer);

@@ -14,6 +14,7 @@ angular.module('boundstate.assessment')
     this.type = config.type || 'choice';
     this.label = config.label;
     this.hint = config.hint;
+    this.linkTitle = config.linkTitle;
     this.config = config;
     this.isEnabled = false;
   };

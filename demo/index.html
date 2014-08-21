@@ -56,7 +56,7 @@
   <script type="text/javascript" src="../bower_components/angular-scroll-to-me/angular-scroll-to-me.js"></script>
   <script type="text/javascript" src="../dist/angular-assessment.js"></script>
 </head>
-<body>
+<body ng-controller="AppCtrl">
 
 <div assessment></div>
 
@@ -67,6 +67,7 @@
       {
         id: 'name',
         label: 'What is your <strong>name</strong>?',
+        linkTitle: 'Help',
         type: 'text',
         placeholder: 'Your name'
       },
@@ -109,7 +110,13 @@
         }
       }
     ]);
-  });
+  })
+  .controller('AppCtrl', function($rootScope) {
+    $rootScope.$on('boundstate.assessment:link_clicked', function(event, questionId) {
+      alert('link clicked for question with id: ' + questionId);
+    });
+  })
+  ;
 </script>
 
 </body>
