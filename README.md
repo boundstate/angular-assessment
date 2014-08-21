@@ -11,6 +11,7 @@ Include `angular-assessment.js` and the libraries it depends on in your HTML:
 
     <script src="bower_components/lodash/dist/lodash.js"></script>
     <script src="bower_components/smooth-scroll/dist/js/smooth-scroll.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-scroll-to-me/angular-scroll-to-me.js"></script>
     <script src="bower_components/angular-assessment/dist/angular-assessment.js"></script>
     
