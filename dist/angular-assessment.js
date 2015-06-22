@@ -1,7 +1,7 @@
 /**
- * angular-assessment - v0.0.12 - 2014-08-21
+ * angular-assessment - v0.0.12 - 2015-06-22
  *
- * Copyright (c) 2014 Bound State Software
+ * Copyright (c) 2015 Bound State Software
  */
 
 
@@ -279,6 +279,12 @@ angular.module("directive/question.tpl.html", []).run(["$templateCache", functio
     "  <div class=\"text\" ng-if=\"question.type == 'text'\">\n" +
     "    <form ng-submit=\"setAnswer(form.answer);\">\n" +
     "      <input type=\"text\" placeholder=\"{{ question.config.placeholder }}\" ng-model=\"form.answer\" ng-focus=\"hasFocus = true\" ng-blur=\"setAnswer(form.answer); hasFocus = false\">\n" +
+    "      <button type=\"submit\" ng-show=\"hasFocus\">Done</button>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"text\" ng-if=\"question.type == 'textarea'\">\n" +
+    "    <form ng-submit=\"setAnswer(form.answer);\">\n" +
+    "      <textarea placeholder=\"{{ question.config.placeholder }}\" ng-model=\"form.answer\" ng-focus=\"hasFocus = true\" ng-blur=\"setAnswer(form.answer); hasFocus = false\"></textarea>\n" +
     "      <button type=\"submit\" ng-show=\"hasFocus\">Done</button>\n" +
     "    </form>\n" +
     "  </div>\n" +

@@ -15,4 +15,10 @@
       <button type="submit" ng-show="hasFocus">Done</button>
     </form>
   </div>
+  <div class="text" ng-if="question.type == 'textarea'">
+    <form ng-submit="setAnswer(form.answer);">
+      <textarea placeholder="{{ question.config.placeholder }}" ng-model="form.answer" ng-focus="hasFocus = true" ng-blur="setAnswer(form.answer); hasFocus = false"></textarea>
+      <button type="submit" ng-show="hasFocus">Done</button>
+    </form>
+  </div>
 </div>
