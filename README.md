@@ -3,7 +3,7 @@
 Assessment service and directives for AngularJS.
 An assessment is an ordered set of multiple-choice questions, which can affect the assessment score.
 
-[![build status](https://ci.boundstatesoftware.com/projects/2/status.png?ref=master)](https://ci.boundstatesoftware.com/projects/2?ref=master)
+[![Build Status](https://travis-ci.org/boundstate/angular-assessment.svg)](https://travis-ci.org/boundstate/angular-assessment)
 
 ## Installation
 
