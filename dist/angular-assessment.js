@@ -218,6 +218,17 @@ angular.module('boundstate.assessment')
         var question = this.getQuestion(questionId);
         return question.isAnswered() ? question.answer : undefined;
       },
+      getAnswers: function() {
+        var answers = {};
+        _(_questions)
+          .filter(function(question) {
+            return question.isAnswered();
+          })
+          .forEach(function(question) {
+            answers[question.id] = question.answer;
+          });
+        return answers;
+      },
       clearAnswers: function() {
         for (var i=0; i<_questions.length; i++) {
           delete _questions[i].answer;

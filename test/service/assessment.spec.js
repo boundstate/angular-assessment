@@ -250,6 +250,21 @@ describe('boundstate.assessment', function () {
 
     });
 
+    describe('getAnswers()', function () {
+
+      it('should return a hash of answers indexed by question id', inject(function () {
+        assessment.setAnswer('cats', 'y');
+        expect(assessment.getAnswers().cats).toEqual('y');
+      }));
+
+      it('should return a hash only containing answered questions', inject(function () {
+        assessment.setAnswer('cats', 'y');
+        assessment.setAnswer('gender', 'm');
+        expect(assessment.getAnswers()).toEqual({cats: 'y', gender: 'm'});
+      }));
+
+    });
+
     describe('clearAnswers()', function () {
 
       it('should clear all answers', inject(function () {
