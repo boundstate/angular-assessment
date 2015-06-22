@@ -7,17 +7,25 @@ An assessment is an ordered set of multiple-choice questions, which can affect t
 
 ## Installation
 
+```js
+bower install angular-assessment
+```
+
 Include `angular-assessment.js` and the libraries it depends on in your HTML:
 
-    <script src="bower_components/lodash/dist/lodash.js"></script>
-    <script src="bower_components/smooth-scroll/dist/js/smooth-scroll.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-scroll-to-me/angular-scroll-to-me.js"></script>
-    <script src="bower_components/angular-assessment/dist/angular-assessment.js"></script>
+```html
+<script src="bower_components/lodash/dist/lodash.js"></script>
+<script src="bower_components/smooth-scroll/dist/js/smooth-scroll.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-scroll-to-me/angular-scroll-to-me.js"></script>
+<script src="bower_components/angular-assessment/dist/angular-assessment.js"></script>
+```
     
 Then load the module in your application by adding it as a dependent module:
 
-    angular.module('app', ['boundstate.assessment']);
+```js
+angular.module('app', ['boundstate.assessment']);
+```
 
 ## Usage
 
@@ -25,43 +33,47 @@ Then load the module in your application by adding it as a dependent module:
 
 Configure the questions:
 
-    assessmentProvider.setQuestions([
-      {
-        id: 'cats',
-        label: 'Do you like cats?'
-      },
-      {
-        id: 'gender',
-        label: 'What is your gender?',
-        options: [
-          { label: 'Male',   value: 'm', score: 'h' },
-          { label: 'Female', value: 'f', score: 'l' }
-        ]
-      },
-      {
-        id: 'age',
-        label: 'What is your age?',
-        options: [
-          { label: 'Under 20', value: 'under20' },
-          { label: '20 - 30',  value: '20to30'  },
-          { label: 'Over 30',  value: 'over30'  }
-        ],
-        score: function(value, score, assessment) {
-          if (assessment.getAnswer('gender') == 'm') {
-            return value == '20to30' ? 'h' : 'm';
-          } else {
-            return value == '20to30' ? 'm' : 'l';
-          }
-        }
+```js
+assessmentProvider.setQuestions([
+  {
+    id: 'cats',
+    label: 'Do you like cats?'
+  },
+  {
+    id: 'gender',
+    label: 'What is your gender?',
+    options: [
+      { label: 'Male',   value: 'm', score: 'h' },
+      { label: 'Female', value: 'f', score: 'l' }
+    ]
+  },
+  {
+    id: 'age',
+    label: 'What is your age?',
+    options: [
+      { label: 'Under 20', value: 'under20' },
+      { label: '20 - 30',  value: '20to30'  },
+      { label: 'Over 30',  value: 'over30'  }
+    ],
+    score: function(value, score, assessment) {
+      if (assessment.getAnswer('gender') == 'm') {
+        return value == '20to30' ? 'h' : 'm';
+      } else {
+        return value == '20to30' ? 'm' : 'l';
       }
-    ])
-    
+    }
+  }
+])
+```
+
 You can optionally specify default options for questions:
 
-    assessmentProvider.setDefaultQuestionOptions([
-      { label: 'Yes', value: 'y' },
-      { label: 'No', value: 'n' }
-    ]);
+```js
+assessmentProvider.setDefaultQuestionOptions([
+  { label: 'Yes', value: 'y' },
+  { label: 'No', value: 'n' }
+]);
+```
     
 Question have the following properties:
 
@@ -83,19 +95,25 @@ The assessment score is determined by evaluating the `score` for all applicable 
 
 Display the assessment using the `assessment` directive:
 
-    <assessment></assessment>
+```html
+<assessment></assessment>
+```
     
 You can also manually render each question using the `question` directive:
 
-    <question question-id="cats"></question>
-    <question question-id="gender"></question>
+```html
+<question question-id="cats"></question>
+<question question-id="gender"></question>
+```
     
 ### Service
     
 Access the current assessment score in a controller:
 
-    $scope.$on('boundstate.assessment:answer_changed', function () {
-      $scope.score = assessment.score;
-    });
+```js
+$scope.$on('boundstate.assessment:answer_changed', function () {
+  $scope.score = assessment.score;
+});
+```
     
 You can also get the answer to a question using `assessment.getAnswer(questionId)`.
