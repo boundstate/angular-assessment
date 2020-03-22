@@ -1,4 +1,4 @@
-<div id="question-{{question.id}}" class="question" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !question.isAnswered() }" scroll-to-me="isCurrent">
+<div id="question-{{question.id}}" class="question question-{{ question.type }}" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !question.isAnswered() }" scroll-to-me="isCurrent">
   <div class="question-label" ng-bind-html="question.label"></div>
   <div class="question-link" ng-if="question.linkTitle"><a ng-click="clickLink()">{{ question.linkTitle }}</a></div>
   <div class="question-hint" ng-if="question.hint" ng-bind-html="question.hint"></div>
