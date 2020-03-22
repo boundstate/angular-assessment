@@ -65,6 +65,16 @@
   .config(function(assessmentProvider) {
     assessmentProvider.setQuestions([
       {
+        id: 'multi-choice-example',
+        label: 'What colors do you like?',
+        type: 'multi-choice',
+        options: [
+          { label: 'Green',  value: 'green'  },
+          { label: 'Red',    value: 'red'    },
+          { label: 'Orange', value: 'orange' }
+        ]
+      },
+      {
         id: 'name',
         label: 'What is your <strong>name</strong>?',
         linkTitle: 'Help',

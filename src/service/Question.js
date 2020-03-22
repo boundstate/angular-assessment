@@ -30,13 +30,16 @@ angular.module('boundstate.assessment')
   Question.prototype.isAnswered = function() {
     if (this.type == 'choice') {
       return angular.isDefined(this.getSelectedOption());
+    } else if (this.type == 'multi-choice') {
+      // multi-choice can be answered without selecting any choices
+      return angular.isDefined(this.answer);
     } else {
       return angular.isDefined(this.answer) && this.answer.length > 0;
     }
   };
 
   Question.prototype.reload = function(score, assessment) {
-    if (this.type == 'choice') {
+    if (this.type == 'choice' || this.type == 'multi-choice') {
       this._reloadOptions(score, assessment);
     }
     this._reloadIsApplicable(score, assessment);

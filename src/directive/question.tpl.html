@@ -2,6 +2,14 @@
   <div class="question-label" ng-bind-html="question.label"></div>
   <div class="question-link" ng-if="question.linkTitle"><a ng-click="clickLink()">{{ question.linkTitle }}</a></div>
   <div class="question-hint" ng-if="question.hint" ng-bind-html="question.hint"></div>
+  <div ng-if="question.type == 'multi-choice'">
+    <div class="multi-choice" ng-repeat="option in question.options" ng-class="{ active: isMultiOptionSelected(option.value) }">
+      <label>
+        <input type="checkbox" ng-model="form.choices['choice-' + $index]" ng-change="toggleMultiOption(option.value)"> {{ option.label }}
+      </label>
+    </div>
+    <button type="button" ng-show="!question.isAnswered()" ng-click="setAnswer(form.answer)">Done</button>
+  </div>
   <div ng-if="question.type == 'choice'">
     <div class="choice" ng-repeat="option in question.options" ng-class="{ active: option.value === form.answer }">
       <label>
