@@ -1,7 +1,7 @@
 /**
- * angular-assessment - v0.0.13 - 2015-06-22
+ * angular-assessment - v0.0.14 - 2020-03-22
  *
- * Copyright (c) 2015 Bound State Software
+ * Copyright (c) 2020 Bound State Software
  */
 
 
@@ -18,10 +18,11 @@ angular.module('boundstate.assessment')
 .directive('assessment', ["assessment", function(assessment) {
   return {
     restrict: 'AE',
-    scope: {},
+    scope: {
+      offset: '='
+    },
     link: function(scope, el, attrs) {
       scope.questions = assessment.getQuestions();
-      scope.offset = el[0].getBoundingClientRect().top;
     },
     templateUrl: 'directive/assessment.tpl.html',
     replace: true
@@ -29,6 +30,7 @@ angular.module('boundstate.assessment')
 }])
 
 ;
+
 angular.module('boundstate.assessment')
 
 .directive('question', ["$rootScope", "assessment", function($rootScope, assessment) {
@@ -37,21 +39,73 @@ angular.module('boundstate.assessment')
     scope: {},
     link: function(scope, el, attrs) {
       scope.question = assessment.getQuestion(attrs.questionId);
-      scope.form = {};
+      scope.form = {
+        choices: {}
+      };
+
+      var indexOf = function (arr, value) {
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i] === value) {
+            return i;
+          }
+        }
+        return false;
+      } ;
 
       var update = function() {
         scope.isCurrent = scope.question.id == assessment.getCurrentQuestion().id;
         scope.form.answer = assessment.getAnswer(scope.question.id);
+        if (scope.question.type == 'multi-choice' && angular.isUndefined(scope.form.answer)) {
+          scope.form.answer = [];
+        }
       };
       $rootScope.$on('boundstate.assessment:answer_changed', update);
       update();
 
-      scope.clickLink = function() {
-        $rootScope.$broadcast('boundstate.assessment:link_clicked', attrs.questionId);
+      /**
+       * Handles the question link click event.
+       * Broadcasts a 'boundstate.assessment:link_clicked' event with the question id as the first argument.
+       */
+      scope.clickLink = function(event, optionValue) {
+        $rootScope.$broadcast('boundstate.assessment:link_clicked', event, attrs.questionId, optionValue);
       };
 
+      /**
+       * Sets the assessment answer.
+       * @param {string|Array} answer
+       */
       scope.setAnswer = function(answer) {
         assessment.setAnswer(scope.question.id, answer);
+      };
+
+      /**
+       * Toggles a multi-choice option.
+       * @param {string} option
+       */
+      scope.toggleMultiOption = function(option) {
+        var index = indexOf(scope.form.answer, option);
+        if (index !== false) {
+          scope.form.answer.splice(index, 1);
+        } else {
+          scope.form.answer.push(option);
+        }
+        // If the question has already been answered, update the question answer immediately.
+        // (Otherwise setAnswer is triggered manually for muti-choice questions.)
+        if (this.question.isAnswered()) {
+          scope.setAnswer(scope.form.answer);
+        }
+      };
+
+      /**
+       * Returns true if a particular multi-choice option is selected.
+       * @param {string} option
+       * @returns {boolean}
+       */
+      scope.isMultiOptionSelected = function(option) {
+        if (angular.isUndefined(scope.form.answer)) {
+          return false;
+        }
+        return indexOf(scope.form.answer, option) !== false;
       };
     },
     templateUrl: 'directive/question.tpl.html',
@@ -60,6 +114,7 @@ angular.module('boundstate.assessment')
 }])
 
 ;
+
 angular.module('boundstate.assessment')
 
 .factory('Question', ["$window", function ($window) {
@@ -92,13 +147,16 @@ angular.module('boundstate.assessment')
   Question.prototype.isAnswered = function() {
     if (this.type == 'choice') {
       return angular.isDefined(this.getSelectedOption());
+    } else if (this.type == 'multi-choice') {
+      // multi-choice can be answered without selecting any choices
+      return angular.isDefined(this.answer);
     } else {
       return angular.isDefined(this.answer) && this.answer.length > 0;
     }
   };
 
   Question.prototype.reload = function(score, assessment) {
-    if (this.type == 'choice') {
+    if (this.type == 'choice' || this.type == 'multi-choice') {
       this._reloadOptions(score, assessment);
     }
     this._reloadIsApplicable(score, assessment);
@@ -142,6 +200,7 @@ angular.module('boundstate.assessment')
 }])
 
 ;
+
 angular.module('boundstate.assessment')
 
 .provider('assessment', function AssessmentProvider() {
@@ -276,14 +335,24 @@ angular.module("directive/assessment.tpl.html", []).run(["$templateCache", funct
 
 angular.module("directive/question.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directive/question.tpl.html",
-    "<div id=\"question-{{question.id}}\" class=\"question\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !question.isAnswered() }\" scroll-to-me=\"isCurrent\">\n" +
+    "<div id=\"question-{{question.id}}\" class=\"question question-{{ question.type }}\" ng-show=\"question.isEnabled\" ng-class=\"{ current: isCurrent && !question.isAnswered() }\" scroll-to-me=\"isCurrent\">\n" +
     "  <div class=\"question-label\" ng-bind-html=\"question.label\"></div>\n" +
-    "  <div class=\"question-link\" ng-if=\"question.linkTitle\"><a ng-click=\"clickLink()\">{{ question.linkTitle }}</a></div>\n" +
+    " <a class=\"question-link\" ng-click=\"clickLink($event)\" ng-bind-html=\"question.linkTitle\"></a>\n" +
     "  <div class=\"question-hint\" ng-if=\"question.hint\" ng-bind-html=\"question.hint\"></div>\n" +
+    "  <div ng-if=\"question.type == 'multi-choice'\">\n" +
+    "    <div class=\"multi-choice\" ng-repeat=\"option in question.options\" ng-class=\"{ active: isMultiOptionSelected(option.value) }\">\n" +
+    "      <label>\n" +
+    "        <input type=\"checkbox\" ng-model=\"form.choices['choice-' + $index]\" ng-change=\"toggleMultiOption(option.value)\"> {{ option.label }}\n" +
+    "        <a class=\"question-option-link\" ng-click=\"clickLink($event, option.value)\" ng-bind-html=\"option.linkTitle\"></a>\n" +
+    "      </label>\n" +
+    "    </div>\n" +
+    "    <button type=\"button\" ng-show=\"!question.isAnswered()\" ng-click=\"setAnswer(form.answer)\">Done</button>\n" +
+    "  </div>\n" +
     "  <div ng-if=\"question.type == 'choice'\">\n" +
     "    <div class=\"choice\" ng-repeat=\"option in question.options\" ng-class=\"{ active: option.value === form.answer }\">\n" +
     "      <label>\n" +
     "        <input type=\"radio\" ng-model=\"form.answer\" ng-value=\"option.value\" ng-change=\"setAnswer(form.answer)\"> {{ option.label }}\n" +
+    "        <a class=\"question-option-link\" ng-click=\"clickLink($event, option.value)\"  ng-bind-html=\"option.linkTitle\"></a>\n" +
     "      </label>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -299,6 +368,7 @@ angular.module("directive/question.tpl.html", []).run(["$templateCache", functio
     "      <button type=\"submit\" ng-show=\"hasFocus\">Done</button>\n" +
     "    </form>\n" +
     "  </div>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 })(window, window.angular);
