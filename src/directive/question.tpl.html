@@ -1,11 +1,12 @@
 <div id="question-{{question.id}}" class="question question-{{ question.type }}" ng-show="question.isEnabled" ng-class="{ current: isCurrent && !question.isAnswered() }" scroll-to-me="isCurrent">
   <div class="question-label" ng-bind-html="question.label"></div>
-  <div class="question-link" ng-if="question.linkTitle"><a ng-click="clickLink()">{{ question.linkTitle }}</a></div>
+ <a class="question-link" ng-click="clickLink($event)" ng-bind-html="question.linkTitle"></a>
   <div class="question-hint" ng-if="question.hint" ng-bind-html="question.hint"></div>
   <div ng-if="question.type == 'multi-choice'">
     <div class="multi-choice" ng-repeat="option in question.options" ng-class="{ active: isMultiOptionSelected(option.value) }">
       <label>
         <input type="checkbox" ng-model="form.choices['choice-' + $index]" ng-change="toggleMultiOption(option.value)"> {{ option.label }}
+        <a class="question-option-link" ng-click="clickLink($event, option.value)" ng-bind-html="option.linkTitle"></a>
       </label>
     </div>
     <button type="button" ng-show="!question.isAnswered()" ng-click="setAnswer(form.answer)">Done</button>
@@ -14,6 +15,7 @@
     <div class="choice" ng-repeat="option in question.options" ng-class="{ active: option.value === form.answer }">
       <label>
         <input type="radio" ng-model="form.answer" ng-value="option.value" ng-change="setAnswer(form.answer)"> {{ option.label }}
+        <a class="question-option-link" ng-click="clickLink($event, option.value)"  ng-bind-html="option.linkTitle"></a>
       </label>
     </div>
   </div>

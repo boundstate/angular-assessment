@@ -69,7 +69,7 @@
         label: 'What colors do you like?',
         type: 'multi-choice',
         options: [
-          { label: 'Green',  value: 'green'  },
+          { label: 'Green',  value: 'green', linkTitle: 'Examples <i>test</i>'  },
           { label: 'Red',    value: 'red'    },
           { label: 'Orange', value: 'orange' }
         ]
@@ -127,8 +127,9 @@
     ]);
   })
   .controller('AppCtrl', function($rootScope) {
-    $rootScope.$on('boundstate.assessment:link_clicked', function(event, questionId) {
-      alert('link clicked for question with id: ' + questionId);
+    $rootScope.$on('boundstate.assessment:link_clicked', function(event, clickEvent, questionId, optionValue) {
+      console.log(clickEvent);
+      alert('link clicked for question with id: ' + questionId + ' and option value ' + optionValue);
     });
   })
   ;

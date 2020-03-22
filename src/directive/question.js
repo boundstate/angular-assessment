@@ -33,8 +33,8 @@ angular.module('boundstate.assessment')
        * Handles the question link click event.
        * Broadcasts a 'boundstate.assessment:link_clicked' event with the question id as the first argument.
        */
-      scope.clickLink = function() {
-        $rootScope.$broadcast('boundstate.assessment:link_clicked', attrs.questionId);
+      scope.clickLink = function(event, optionValue) {
+        $rootScope.$broadcast('boundstate.assessment:link_clicked', event, attrs.questionId, optionValue);
       };
 
       /**
